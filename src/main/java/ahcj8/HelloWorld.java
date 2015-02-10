@@ -4,6 +4,8 @@ import ahcj8.client.AhcCompletableClient;
 import ahcj8.client.CompletableClient;
 import com.ning.http.client.Response;
 import webster.requestresponse.Request;
+import webster.requestresponse.ResponseBody;
+import webster.requestresponse.Responses;
 import webster.resource.ContentNegotiationResource;
 import webster.resource.Resource;
 
@@ -25,7 +27,7 @@ public class HelloWorld extends ContentNegotiationResource implements Resource{
         return CompletableFuture.completedFuture(true);
     }
 
-    private CompletableFuture<Object> jsonEntity(Request request){
+    private CompletableFuture<ResponseBody> jsonEntity(Request request){
         final Function<Response, String> responseParser = response -> {
             try {
                 return response.getResponseBody();
@@ -40,7 +42,7 @@ public class HelloWorld extends ContentNegotiationResource implements Resource{
         final CompletableFuture<String> value = setValue.thenCompose(k ->
                         client.get("/kv/" + k, responseParser)
         );
-        return value.thenApply(v -> v);
+        return value.thenApply(Responses::from);
     }
 
     @Override
